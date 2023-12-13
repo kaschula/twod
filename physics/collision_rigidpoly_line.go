@@ -17,6 +17,25 @@ func CollisionRigidPolyDiagonalLine(a, b RigidPoly) *Collision {
 	return nil
 }
 
+func CollisionRigidPolyDiagonalLineValue(a, b RigidPoly) Collision {
+	if a == nil || b == nil {
+		return emptyCollision()
+	}
+
+	touch := lineSetCollision(a.Radiuses(), b.Edges())
+	if !touch.Empty() {
+		return NewCollisionFromTouchValue(touch)
+	}
+
+	// check the inverse
+	touch = lineSetCollision(b.Radiuses(), a.Edges())
+	if !touch.Empty() {
+		return NewCollisionFromTouchValue(touch).ReverseDirectionValue()
+	}
+
+	return emptyCollision()
+}
+
 // lineSetCollision Loops through to sets of lines to determine if any lines intersect
 func lineSetCollision(lineSetA, lineSetB []*LineSegment) Touch {
 	for _, lineA := range lineSetA {

@@ -2,6 +2,7 @@ package physics
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -64,4 +65,15 @@ func TestRect_Edges(t *testing.T) {
 	assert.Equal(t, NewLineSegment(r.TopRight(), r.BottomRight()), edges[1])
 	assert.Equal(t, NewLineSegment(r.BottomRight(), r.BottomLeft()), edges[2])
 	assert.Equal(t, NewLineSegment(r.BottomLeft(), r.TopLeft()), edges[3])
+}
+
+func TestNewRectangleFromCorners(t *testing.T) {
+	tl := New(10, 10)
+	br := New(15, 16)
+
+	r := NewRectangleFromCorners(tl, br, 0)
+
+	require.Equal(t, 6, r.height)
+	require.Equal(t, 5, r.width)
+	require.True(t, r.Body.center.Equal(New(12.5, 13)))
 }
