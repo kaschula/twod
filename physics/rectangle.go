@@ -16,6 +16,18 @@ func (r *Rect) Sides() int {
 	return 4
 }
 
+func NewRectangleFromCorners(topLeft, bottomRight V, boundingRadius int, os ...Option) *Rect {
+	width := bottomRight.X() - topLeft.X()
+	height := bottomRight.Y() - topLeft.Y()
+	center := New(width/2, height/2).Add(topLeft)
+
+	if width <= 0 || height <= 0 {
+		return nil
+	}
+
+	return NewRectangle(center, int(width), int(height), boundingRadius, os...)
+}
+
 func NewRectangle(center V, width, height, boundingRadius int, os ...Option) *Rect {
 	// todo set bounding to half the diagonal: Math.sqrt(width*width + height*height)/2;
 	// Make boundingRadius an option
@@ -28,13 +40,6 @@ func NewRectangle(center V, width, height, boundingRadius int, os ...Option) *Re
 		height:               height,
 		normalFaceToVertices: map[int]int{},
 	}
-
-	// todo play old games and check that these changes can be deleted
-	//topLeft, topRight, bottomRight, bottomLeft := r.calculateCorners()
-	//originalVertices := NewMatrix2d(topLeft, topRight, bottomRight, bottomLeft)
-	//r.originalVertices = originalVertices
-	//r.vertices = originalVertices
-	//r.setFaces()
 
 	r.calculateShapeEdges()
 

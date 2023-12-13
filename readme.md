@@ -6,3 +6,4 @@ The vector, collision and math packages are library agnostic.
 
 This Repo is not very stable and a work in progress. It is based on an old private repo. This project was started as a learning tool.
 
+ 

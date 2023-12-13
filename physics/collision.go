@@ -8,15 +8,27 @@ type Collision struct {
 	// direction of depth
 	normal V
 	// smallest amount objects have crossed over
-	depth float64 // maybe int
+	depth       float64 // maybe int
+	hasCollided bool
 }
 
 func NewCollision(start, normal V, depth float64) *Collision {
 	return &Collision{
-		start:  start,
-		end:    start.Add(normal.Scale(depth)),
-		normal: normal,
-		depth:  depth,
+		hasCollided: true,
+		start:       start,
+		end:         start.Add(normal.Scale(depth)),
+		normal:      normal,
+		depth:       depth,
+	}
+}
+
+func emptyCollision() Collision {
+	return Collision{
+		hasCollided: false,
+		start:       ZeroVector,
+		end:         ZeroVector,
+		normal:      ZeroVector,
+		depth:       0,
 	}
 }
 
@@ -26,6 +38,14 @@ func NewCollisionFromTouch(touch Touch) *Collision {
 	}
 
 	return NewCollision(touch.Vector(), touch.LineAEndToOffSet().Direction().Invert().Normalize(), touch.LineAEndToOffSet().Magnitude())
+}
+
+func NewCollisionFromTouchValue(touch Touch) Collision {
+	if touch.Empty() {
+		return emptyCollision()
+	}
+
+	return *NewCollision(touch.Vector(), touch.LineAEndToOffSet().Direction().Invert().Normalize(), touch.LineAEndToOffSet().Magnitude())
 }
 
 func (c *Collision) Start() V {
@@ -51,9 +71,25 @@ func (c *Collision) Resolve() V {
 func (c *Collision) ReverseDirection() *Collision {
 	start := c.start
 	return &Collision{
-		normal: c.normal.Scale(-1),
-		start:  c.end,
-		end:    start,
-		depth:  c.depth,
+		hasCollided: true,
+		normal:      c.normal.Scale(-1),
+		start:       c.end,
+		end:         start,
+		depth:       c.depth,
 	}
+}
+
+func (c Collision) ReverseDirectionValue() Collision {
+	start := c.start
+	return Collision{
+		hasCollided: true,
+		normal:      c.normal.Scale(-1),
+		start:       c.end,
+		end:         start,
+		depth:       c.depth,
+	}
+}
+
+func (c Collision) Occured() bool {
+	return c.hasCollided
 }

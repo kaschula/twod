@@ -2,6 +2,7 @@ package inputs
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/kaschula/twod/containers"
 	"github.com/kaschula/twod/physics"
 	"time"
 )
@@ -99,4 +100,26 @@ func (producer *MouseInputProducer) right() []InputEvent {
 	}
 
 	return events
+}
+
+func GetFirstMouseClickVector(button ebiten.MouseButton, events []InputEvent) containers.Maybe[physics.V] {
+	if len(events) == 0 {
+		return containers.Nothing[physics.V]()
+	}
+
+	for _, event := range events {
+		if !event.IsMouse() {
+			continue
+		}
+
+		mouseEvent := event.GetMouse()
+
+		if mouseEvent.Button() != button {
+			continue
+		}
+
+		return containers.Just(mouseEvent.At())
+	}
+
+	return containers.Nothing[physics.V]()
 }
